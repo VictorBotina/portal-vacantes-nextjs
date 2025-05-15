@@ -54,7 +54,7 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Instrucciones para filtrar y aplicar a vacantes disponibles</CardTitle>
+          <CardTitle className="text-base">Instrucciones para filtrar y aplicar a vacantes disponibles</CardTitle>
           <CardDescription className="text-base text-muted-foreground space-y-2 pt-2">
             <p>
               Seleccione el departamento sobre el cual desea obtener más información para consultar detalles como el municipio, nombre del cargo, perfil y objetivo del mismo.
