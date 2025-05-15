@@ -15,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Convocatorias Laborales',
-  description: 'Conoce nuestras oportunidades laborales y como postularse para formar parte de Emssanar EPS',
+  description: 'Te invitamos a explorar nuestras oportunidades laborales y a postularte para formar parte de Emssanar EPS. Descubre los cargos disponibles, consulta los detalles y comienza tu camino hacia una carrera gratificante en el sector de la salud. ¡Tu futuro profesional comienza aquí en Emssanar EPS!',
+
 };
 
 export default function RootLayout({
