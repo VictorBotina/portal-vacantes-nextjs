@@ -4,8 +4,6 @@ import { InteractiveDataView } from "@/components/sheet-surfer/InteractiveDataVi
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
-// The Google Sheet URL is now read from environment variables
-// const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Gi_bB6J6fMCWb77Ii21cj_IgEbKu5a5Kqf5eEexVt6xnr4wIvQ175kfGgW7029MAry_FrHoF74pL/pub?gid=0&single=true&output=csv";
 
 async function fetchData(): Promise<{ parsedData: ParsedCSVData; error?: string }> {
   const googleSheetUrl = process.env.GOOGLE_SHEET_URL;
