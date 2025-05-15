@@ -7,7 +7,7 @@ import { StructuredDataView } from "@/components/sheet-surfer/StructuredDataView
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Filter } from "lucide-react";
+import { Filter, Briefcase } from "lucide-react";
 
 interface InteractiveDataViewProps {
   initialData: ParsedCSVData;
@@ -18,9 +18,9 @@ interface InteractiveDataViewProps {
 export function InteractiveDataView({ initialData, departments, fetchError }: InteractiveDataViewProps) {
   const [selectedDepartment, setSelectedDepartment] = useState<string | "all">("all");
 
-  const filteredData = useMemo(() => {
+  const departmentFilteredData = useMemo(() => {
     if (!initialData || !initialData.rows) {
-      return { headers: [], rows: [] };
+      return { headers: initialData.headers || [], rows: [] };
     }
     if (selectedDepartment === "all") {
       return initialData;
@@ -30,6 +30,16 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     );
     return { headers: initialData.headers, rows: filteredRows };
   }, [initialData, selectedDepartment]);
+
+  const availableVacanciesCount = useMemo(() => {
+    if (!departmentFilteredData || !departmentFilteredData.rows) {
+      return 0;
+    }
+    return departmentFilteredData.rows.filter(row => {
+      const nombreDelCargo = row["Nombre del Cargo"];
+      return nombreDelCargo && nombreDelCargo.trim() !== "";
+    }).length;
+  }, [departmentFilteredData]);
 
   const hasData = initialData.rows.length > 0 && initialData.headers.length > 0;
 
@@ -68,8 +78,15 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
             </div>
           )}
 
+          {hasData && !fetchError && (
+            <div className="mb-4 flex items-center text-sm text-muted-foreground">
+              <Briefcase className="mr-2 h-4 w-4 text-primary" />
+              <span>Vacantes disponibles: {availableVacanciesCount}</span>
+            </div>
+          )}
+
           {hasData && !fetchError ? (
-            <StructuredDataView data={filteredData} />
+            <StructuredDataView data={departmentFilteredData} />
           ) : !fetchError ? (
             <p className="text-center text-muted-foreground py-8">No data loaded or the sheet is empty.</p>
           ) : null}
@@ -78,3 +95,4 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     </div>
   );
 }
+
