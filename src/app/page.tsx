@@ -4,11 +4,21 @@ import { InteractiveDataView } from "@/components/sheet-surfer/InteractiveDataVi
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
-const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Gi_bB6J6fMCWb77Ii21cj_IgEbKu5a5Kqf5eEexVt6xnr4wIvQ175kfGgW7029MAry_FrHoF74pL/pub?gid=0&single=true&output=csv";
+// The Google Sheet URL is now read from environment variables
+// const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Gi_bB6J6fMCWb77Ii21cj_IgEbKu5a5Kqf5eEexVt6xnr4wIvQ175kfGgW7029MAry_FrHoF74pL/pub?gid=0&single=true&output=csv";
 
 async function fetchData(): Promise<{ parsedData: ParsedCSVData; error?: string }> {
+  const googleSheetUrl = process.env.GOOGLE_SHEET_URL;
+
+  if (!googleSheetUrl) {
+    return { 
+      parsedData: { headers: [], rows: [] }, 
+      error: "La URL de Google Sheet no está configurada en las variables de entorno (GOOGLE_SHEET_URL)." 
+    };
+  }
+
   try {
-    const response = await fetch(GOOGLE_SHEET_URL, { cache: 'no-store' });
+    const response = await fetch(googleSheetUrl, { cache: 'no-store' });
     if (!response.ok) {
       throw new Error(`Failed to fetch data: ${response.statusText}`);
     }
@@ -39,7 +49,7 @@ export default async function HomePage() {
       {error && (
          <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error Fetching Data</AlertTitle>
+          <AlertTitle>Error al Cargar Datos</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
