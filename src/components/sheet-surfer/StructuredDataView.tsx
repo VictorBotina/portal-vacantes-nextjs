@@ -10,8 +10,6 @@ interface StructuredDataViewProps {
 }
 
 // Fields to be displayed in the card content, in order.
-// "Nombre del Cargo" will be the CardTitle.
-// "Tipo de convocatoria" will be the CardDescription.
 const contentFields = [
   "Fechas de publicación",
   "Fechas de cierre",
@@ -32,78 +30,91 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
       return <p className="text-center text-muted-foreground py-8">Data headers are missing or empty.</p>;
   }
 
-  // Check if essential columns are present
-  const requiredColumns = ["Nombre del Cargo", "Tipo de convocatoria", ...contentFields];
-  const missingColumns = requiredColumns.filter(col => !data.headers.includes(col) && col !== "Link de la convocatoria"); // Link is optional display
-  
-  // Allow "Link de la convocatoria" to be optional in the source data for display logic
   const hasLinkColumn = data.headers.includes("Link de la convocatoria");
 
+  const validRows = data.rows.filter(row => {
+    const nombreDelCargo = row["Nombre del Cargo"];
+    return nombreDelCargo && nombreDelCargo.trim() !== "";
+  });
+
+  if (validRows.length === 0) {
+    return <p className="text-center text-muted-foreground py-8">No valid records to display after filtering.</p>;
+  }
 
   return (
     <ScrollArea className="h-[70vh] rounded-md border p-1 md:p-4">
       <div className="space-y-4">
-        {data.rows.map((row, index) => (
-          <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-200">
-            <CardHeader>
-              <CardTitle>{row["Nombre del Cargo"] || <span className="text-muted-foreground italic">Nombre del Cargo no disponible</span>}</CardTitle>
-              {data.headers.includes("Tipo de convocatoria") && (
-                <CardDescription>
-                  <strong>Tipo de Convocatoria:</strong> {row["Tipo de convocatoria"] || <span className="text-muted-foreground italic">No disponible</span>}
-                </CardDescription>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              {contentFields.map((field) => {
-                  if (!data.headers.includes(field)) {
-                    // Special handling for Link de la convocatoria if it's not a header
-                    if (field === "Link de la convocatoria") return null; 
-                    // For other fields, if not in header, show as unavailable if it was in the original user request
-                    const userRequestedFields = [
-                        "Tipo de convocatoria", "Fechas de publicación", "Fechas de cierre", 
-                        "Nombre del Cargo", "Perfil del cargo", "Objetivo del cargo", 
-                        "Tipo de Contrato", "Municipio", "Departamento"
-                    ];
-                    if (userRequestedFields.includes(field)) {
-                         return (
-                            <div key={field}>
-                                <strong className="font-medium">{field}:</strong>{' '}
-                                <span className="text-muted-foreground italic">No disponible en los datos</span>
-                            </div>
-                         );
-                    }
-                    return null;
-                  }
-                  
-                  const value = row[field];
+        {validRows.map((row, index) => {
+          const nombreDelCargoValue = row["Nombre del Cargo"];
+          // This check is now done by filtering validRows, but kept for safety if individual rendering logic changes
+          if (!nombreDelCargoValue || nombreDelCargoValue.trim() === "") {
+            return null; 
+          }
 
-                  if (field === "Link de la convocatoria" && value && (value.startsWith('http://') || value.startsWith('https://'))) {
-                    return (
-                      <div key={field}>
-                        <strong className="font-medium">{field}:</strong>{' '}
-                        <a 
-                          href={value} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="text-primary hover:underline break-all"
-                        >
-                          Ver convocatoria
-                        </a>
-                      </div>
-                    );
-                  }
-                  
-                  // For other fields or if link is not a valid URL
-                  return (
-                    <div key={field}>
-                      <strong className="font-medium">{field}:</strong>{' '}
-                      {value || <span className="text-muted-foreground italic">No disponible</span>}
-                    </div>
-                  );
-              })}
-            </CardContent>
-          </Card>
-        ))}
+          const tipoConvocatoriaValue = data.headers.includes("Tipo de convocatoria") ? row["Tipo de convocatoria"] : "";
+          
+          let hasContent = false;
+          const renderedContentFields = contentFields.map((field) => {
+            if (!data.headers.includes(field) && field !== "Link de la convocatoria") {
+                return null;
+            }
+            
+            const value = row[field];
+            if (!value || String(value).trim() === "") {
+                return null;
+            }
+            hasContent = true; // Mark that there's at least one content field with data
+
+            if (field === "Link de la convocatoria" && (String(value).startsWith('http://') || String(value).startsWith('https://'))) {
+              return (
+                <div key={field}>
+                  <strong className="font-medium">{field}:</strong>{' '}
+                  <a 
+                    href={String(value)}
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-primary hover:underline break-all"
+                  >
+                    Ver convocatoria
+                  </a>
+                </div>
+              );
+            }
+            
+            return (
+              <div key={field}>
+                <strong className="font-medium">{field}:</strong>{' '}
+                {String(value)}
+              </div>
+            );
+          }).filter(Boolean);
+
+
+          // Only render card if there is a title or description or any content field
+          if (!nombreDelCargoValue.trim() && (!tipoConvocatoriaValue || tipoConvocatoriaValue.trim() === "") && !hasContent) {
+            return null;
+          }
+
+          return (
+            <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-200">
+              <CardHeader>
+                {nombreDelCargoValue && nombreDelCargoValue.trim() !== "" && (
+                  <CardTitle>{nombreDelCargoValue}</CardTitle>
+                )}
+                {tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
+                  <CardDescription>
+                    <strong>Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
+                  </CardDescription>
+                )}
+              </CardHeader>
+              {hasContent && (
+                <CardContent className="space-y-2 text-sm">
+                  {renderedContentFields}
+                </CardContent>
+              )}
+            </Card>
+          );
+        })}
       </div>
     </ScrollArea>
   );
