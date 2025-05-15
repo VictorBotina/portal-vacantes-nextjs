@@ -7,7 +7,7 @@ import { StructuredDataView } from "@/components/sheet-surfer/StructuredDataView
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Filter, Briefcase } from "lucide-react";
+import { Filter, Briefcase, Info } from "lucide-react";
 
 interface InteractiveDataViewProps {
   initialData: ParsedCSVData;
@@ -32,27 +32,33 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     return { headers: initialData.headers, rows: filteredRows };
   }, [initialData, selectedDepartment]);
 
-  const availableVacanciesCount = useMemo(() => {
-    if (!departmentFilteredData || !departmentFilteredData.rows) {
-      return 0;
-    }
-    // This count relies on the StructuredDataView's internal filtering for "Nombre del Cargo"
-    // To be fully accurate here, we should replicate that filtering.
-    return departmentFilteredData.rows.filter(row => {
-      const nombreDelCargo = row["Nombre del Cargo"];
-      return nombreDelCargo && nombreDelCargo.trim() !== "";
-    }).length;
+  const totalRecordsInDepartment = useMemo(() => {
+    return departmentFilteredData.rows.length;
   }, [departmentFilteredData]);
 
   const hasData = initialData.rows.length > 0 && initialData.headers.length > 0;
+
+  const departmentDisplayName = selectedDepartment === "all" || !selectedDepartment ? "Todos los Departamentos" : selectedDepartment;
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Data Explorer</CardTitle>
-          <CardDescription>
-            View and filter data from your Google Sheet.
+          <CardDescription className="text-sm text-muted-foreground space-y-2 pt-2">
+            <p>
+              Seleccione el departamento sobre el cual desea obtener más información para consultar detalles como el municipio, nombre del cargo, perfil y objetivo del mismo.
+            </p>
+            <p>
+              Si está interesado en aplicar, envíe su hoja de vida al correo{" "}
+              <a href="mailto:seleccionemssanareps@emssanareps.co" className="text-primary hover:underline">
+                seleccionemssanareps@emssanareps.co
+              </a>
+              , indicando en el asunto del mensaje el nombre del cargo y el municipio al que se postula (si es aspirante interno, agregue al asunto: “- Postulación interna”) y adjuntando su hoja de vida actualizada.
+            </p>
+            <p>
+              Si no cumple con el perfil, por favor abstenerse de postularse.
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -82,9 +88,9 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
           )}
 
           {hasData && !fetchError && (
-            <div className="mb-4 flex items-center text-sm text-muted-foreground">
-              <Briefcase className="mr-2 h-4 w-4 text-primary" />
-              <span>Vacantes disponibles: {availableVacanciesCount}</span>
+             <div className="mb-4 flex items-center text-sm text-muted-foreground">
+              <Info className="mr-2 h-4 w-4 text-primary" />
+              <span>Registros en {departmentDisplayName}: {totalRecordsInDepartment}</span>
             </div>
           )}
 
