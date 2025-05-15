@@ -4,6 +4,7 @@
 import type { ParsedCSVData } from "@/lib/csv-parser";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Briefcase } from "lucide-react"; // Import the Briefcase icon
 
 interface StructuredDataViewProps {
   data: ParsedCSVData;
@@ -23,8 +24,6 @@ const contentFields = [
 
 export function StructuredDataView({ data }: StructuredDataViewProps) {
   if (!data || !data.rows || data.rows.length === 0) {
-    // This case is usually handled by InteractiveDataView's totalRecordsInDepartment check,
-    // but kept as a safeguard if StructuredDataView is used directly with no data.
     return <p className="text-center text-muted-foreground py-8">No data available to display.</p>;
   }
 
@@ -32,10 +31,9 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
       return <p className="text-center text-muted-foreground py-8">Data headers are missing or empty.</p>;
   }
 
-  const validRows = data.rows; // We now expect InteractiveDataView to send all rows for the department
+  const validRows = data.rows; 
 
   if (validRows.length === 0) {
-     // This message will show if, for example, a department is selected but has genuinely no rows.
      return <p className="text-center text-muted-foreground py-8">No records found for the current selection.</p>;
   }
 
@@ -74,7 +72,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
                 </div>
               );
             }
-            // Display non-URL link text as plain text if it's not empty
+            
             if (field === "Link de la convocatoria" && String(value).trim() !== "") {
                return (
                 <div key={field}>
@@ -83,7 +81,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
                 </div>
               );
             }
-            if (field !== "Link de la convocatoria") { // Ensure other fields are rendered
+            if (field !== "Link de la convocatoria") { 
                 return (
                   <div key={field}>
                     <strong className="font-bold">{field}:</strong>{' '}
@@ -95,20 +93,28 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
           }).filter(Boolean);
 
 
-          // Only render card if there is a title or description or any content field
-          // We still render the card shell even if title is missing, to show other details.
-          // The outer logic in InteractiveDataView handles the "no records" message.
-
           return (
             <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-200">
               <CardHeader>
                 {nombreDelCargoValue && nombreDelCargoValue.trim() !== "" && (
-                  <CardTitle>{nombreDelCargoValue}</CardTitle>
+                  <div className="flex items-center">
+                    <Briefcase className="mr-3 h-6 w-6 text-primary flex-shrink-0" />
+                    <CardTitle>{nombreDelCargoValue}</CardTitle>
+                  </div>
                 )}
                 {tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
-                  <CardDescription>
+                  <CardDescription className="mt-1 ml-9"> {/* Added margin-left to align with title if icon is present */}
                     <strong className="font-bold">Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
                   </CardDescription>
+                )}
+                 {/* If no title but there is a type, show icon with type */}
+                {(!nombreDelCargoValue || nombreDelCargoValue.trim() === "") && tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
+                   <div className="flex items-center">
+                    <Briefcase className="mr-3 h-6 w-6 text-primary flex-shrink-0" />
+                     <CardDescription>
+                        <strong className="font-bold">Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
+                    </CardDescription>
+                   </div>
                 )}
               </CardHeader>
               {hasContent && (
@@ -123,3 +129,4 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
     </ScrollArea>
   );
 }
+
