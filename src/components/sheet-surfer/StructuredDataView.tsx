@@ -34,23 +34,24 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
 
   const validRows = data.rows.filter(row => {
     const nombreDelCargo = row["Nombre del Cargo"];
-    return nombreDelCargo && nombreDelCargo.trim() !== "";
+    // Ensure that we render cards even if Nombre del Cargo is technically present but just whitespace.
+    // The card itself will handle not showing a title if it's effectively empty.
+    return true; 
   });
 
-  if (validRows.length === 0) {
-    return <p className="text-center text-muted-foreground py-8">No valid records to display after filtering.</p>;
+  if (validRows.length === 0 && initialData.rows.length > 0) { // Check if filtering made it empty
+    return <p className="text-center text-muted-foreground py-8">No records match the current criteria, but data is loaded.</p>;
   }
+  if (validRows.length === 0) { // No data at all or truly empty after initial load
+     return <p className="text-center text-muted-foreground py-8">No valid records to display.</p>;
+  }
+
 
   return (
     <ScrollArea className="h-[70vh] rounded-md border p-1 md:p-4">
       <div className="space-y-4">
         {validRows.map((row, index) => {
           const nombreDelCargoValue = row["Nombre del Cargo"];
-          // This check is now done by filtering validRows, but kept for safety if individual rendering logic changes
-          if (!nombreDelCargoValue || nombreDelCargoValue.trim() === "") {
-            return null; 
-          }
-
           const tipoConvocatoriaValue = data.headers.includes("Tipo de convocatoria") ? row["Tipo de convocatoria"] : "";
           
           let hasContent = false;
@@ -63,7 +64,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
             if (!value || String(value).trim() === "") {
                 return null;
             }
-            hasContent = true; // Mark that there's at least one content field with data
+            hasContent = true;
 
             if (field === "Link de la convocatoria" && (String(value).startsWith('http://') || String(value).startsWith('https://'))) {
               return (
@@ -80,18 +81,31 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
                 </div>
               );
             }
-            
-            return (
-              <div key={field}>
-                <strong className="font-medium">{field}:</strong>{' '}
-                {String(value)}
-              </div>
-            );
+            // Display non-URL link text as plain text if it's not empty
+            if (field === "Link de la convocatoria" && String(value).trim() !== "") {
+               return (
+                <div key={field}>
+                  <strong className="font-medium">{field}:</strong>{' '}
+                  {String(value)}
+                </div>
+              );
+            }
+            if (field !== "Link de la convocatoria") { // Ensure other fields are rendered
+                return (
+                  <div key={field}>
+                    <strong className="font-medium">{field}:</strong>{' '}
+                    {String(value)}
+                  </div>
+                );
+            }
+            return null;
           }).filter(Boolean);
 
 
           // Only render card if there is a title or description or any content field
-          if (!nombreDelCargoValue.trim() && (!tipoConvocatoriaValue || tipoConvocatoriaValue.trim() === "") && !hasContent) {
+          if ((!nombreDelCargoValue || nombreDelCargoValue.trim() === "") && 
+              (!tipoConvocatoriaValue || tipoConvocatoriaValue.trim() === "") && 
+              !hasContent) {
             return null;
           }
 
@@ -119,3 +133,6 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
     </ScrollArea>
   );
 }
+
+// Helper to check if initialData is passed and not empty
+const initialData = { rows: [] as any[], headers: [] as string[]};
