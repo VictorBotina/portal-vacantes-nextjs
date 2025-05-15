@@ -1,7 +1,7 @@
 
 import { parseCSV, type ParsedCSVData } from "@/lib/csv-parser";
 import { InteractiveDataView } from "@/components/sheet-surfer/InteractiveDataView";
-import { AlertCircle, Newspaper } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Gi_bB6J6fMCWb77Ii21cj_IgEbKu5a5Kqf5eEexVt6xnr4wIvQ175kfGgW7029MAry_FrHoF74pL/pub?gid=0&single=true&output=csv";
@@ -34,15 +34,7 @@ export default async function HomePage() {
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-      <header className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight text-primary flex items-center justify-center">
-          <Newspaper className="mr-3 h-10 w-10" />
-          Sheet Surfer
-        </h1>
-        <p className="text-lg text-muted-foreground mt-2">
-          Explore, filter, and get AI-powered summaries of your Google Sheet data.
-        </p>
-      </header>
+      {/* Header section removed as per user request */}
 
       {error && (
          <Alert variant="destructive" className="mb-6">

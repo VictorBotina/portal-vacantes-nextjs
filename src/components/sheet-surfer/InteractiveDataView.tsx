@@ -44,20 +44,20 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Data Explorer</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground space-y-2 pt-2">
+          <CardTitle>Instrucciones para filtrar y aplicar a vacantes disponibles</CardTitle>
+          <CardDescription className="text-base text-muted-foreground space-y-2 pt-2">
             <p>
               Seleccione el departamento sobre el cual desea obtener más información para consultar detalles como el municipio, nombre del cargo, perfil y objetivo del mismo.
             </p>
             <p>
               Si está interesado en aplicar, envíe su hoja de vida al correo{" "}
-              <a href="mailto:seleccionemssanareps@emssanareps.co" className="text-primary hover:underline">
+              <strong><a href="mailto:seleccionemssanareps@emssanareps.co" className="text-primary hover:underline">
                 seleccionemssanareps@emssanareps.co
-              </a>
+              </a></strong>
               , indicando en el asunto del mensaje el nombre del cargo y el municipio al que se postula (si es aspirante interno, agregue al asunto: “- Postulación interna”) y adjuntando su hoja de vida actualizada.
             </p>
             <p>
-              Si no cumple con el perfil, por favor abstenerse de postularse.
+              <strong>Si no cumple con el perfil, por favor abstenerse de postularse.</strong>
             </p>
           </CardDescription>
         </CardHeader>
