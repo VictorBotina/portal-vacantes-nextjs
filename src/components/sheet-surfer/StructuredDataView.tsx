@@ -18,11 +18,13 @@ const contentFields = [
   "Tipo de Contrato",
   "Municipio",
   "Departamento",
-  "Link de la convocatoria" 
+  "Link de la convocatoria"
 ];
 
 export function StructuredDataView({ data }: StructuredDataViewProps) {
   if (!data || !data.rows || data.rows.length === 0) {
+    // This case is usually handled by InteractiveDataView's totalRecordsInDepartment check,
+    // but kept as a safeguard if StructuredDataView is used directly with no data.
     return <p className="text-center text-muted-foreground py-8">No data available to display.</p>;
   }
 
@@ -30,20 +32,11 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
       return <p className="text-center text-muted-foreground py-8">Data headers are missing or empty.</p>;
   }
 
-  const hasLinkColumn = data.headers.includes("Link de la convocatoria");
+  const validRows = data.rows; // We now expect InteractiveDataView to send all rows for the department
 
-  const validRows = data.rows.filter(row => {
-    const nombreDelCargo = row["Nombre del Cargo"];
-    // Ensure that we render cards even if Nombre del Cargo is technically present but just whitespace.
-    // The card itself will handle not showing a title if it's effectively empty.
-    return true; 
-  });
-
-  if (validRows.length === 0 && initialData.rows.length > 0) { // Check if filtering made it empty
-    return <p className="text-center text-muted-foreground py-8">No records match the current criteria, but data is loaded.</p>;
-  }
-  if (validRows.length === 0) { // No data at all or truly empty after initial load
-     return <p className="text-center text-muted-foreground py-8">No valid records to display.</p>;
+  if (validRows.length === 0) {
+     // This message will show if, for example, a department is selected but has genuinely no rows.
+     return <p className="text-center text-muted-foreground py-8">No records found for the current selection.</p>;
   }
 
 
@@ -69,7 +62,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
             if (field === "Link de la convocatoria" && (String(value).startsWith('http://') || String(value).startsWith('https://'))) {
               return (
                 <div key={field}>
-                  <strong className="font-medium">{field}:</strong>{' '}
+                  <strong className="font-bold">{field}:</strong>{' '}
                   <a 
                     href={String(value)}
                     target="_blank" 
@@ -85,7 +78,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
             if (field === "Link de la convocatoria" && String(value).trim() !== "") {
                return (
                 <div key={field}>
-                  <strong className="font-medium">{field}:</strong>{' '}
+                  <strong className="font-bold">{field}:</strong>{' '}
                   {String(value)}
                 </div>
               );
@@ -93,7 +86,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
             if (field !== "Link de la convocatoria") { // Ensure other fields are rendered
                 return (
                   <div key={field}>
-                    <strong className="font-medium">{field}:</strong>{' '}
+                    <strong className="font-bold">{field}:</strong>{' '}
                     {String(value)}
                   </div>
                 );
@@ -103,11 +96,8 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
 
 
           // Only render card if there is a title or description or any content field
-          if ((!nombreDelCargoValue || nombreDelCargoValue.trim() === "") && 
-              (!tipoConvocatoriaValue || tipoConvocatoriaValue.trim() === "") && 
-              !hasContent) {
-            return null;
-          }
+          // We still render the card shell even if title is missing, to show other details.
+          // The outer logic in InteractiveDataView handles the "no records" message.
 
           return (
             <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-200">
@@ -117,7 +107,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
                 )}
                 {tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
                   <CardDescription>
-                    <strong>Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
+                    <strong className="font-bold">Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
                   </CardDescription>
                 )}
               </CardHeader>
@@ -133,6 +123,3 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
     </ScrollArea>
   );
 }
-
-// Helper to check if initialData is passed and not empty
-const initialData = { rows: [] as any[], headers: [] as string[]};
