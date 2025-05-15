@@ -2,7 +2,7 @@
 import { parseCSV, type ParsedCSVData } from "@/lib/csv-parser";
 // import { DataTable } from "@/components/sheet-surfer/DataTable"; // Replaced by StructuredDataView
 import { StructuredDataView } from "@/components/sheet-surfer/StructuredDataView";
-import { DataSummary } from "@/components/sheet-surfer/DataSummary";
+// import { DataSummary } from "@/components/sheet-surfer/DataSummary"; // Removed DataSummary import
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Newspaper } from "lucide-react"; // Changed Icon
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -53,7 +53,8 @@ export default async function HomePage() {
       )}
 
       <div className="space-y-6">
-        <DataSummary csvData={rawCsv} hasData={hasData && !error} />
+        {/* Removed DataSummary component */}
+        {/* <DataSummary csvData={rawCsv} hasData={hasData && !error} /> */}
 
         <Card>
           <CardHeader>
