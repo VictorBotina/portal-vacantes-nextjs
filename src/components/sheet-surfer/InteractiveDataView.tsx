@@ -25,8 +25,9 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     if (selectedDepartment === "all") {
       return initialData;
     }
+    const lowercasedSelectedDepartment = selectedDepartment.toLowerCase();
     const filteredRows = initialData.rows.filter(
-      (row) => row["Departamento"] === selectedDepartment
+      (row) => row["Departamento"]?.toLowerCase() === lowercasedSelectedDepartment
     );
     return { headers: initialData.headers, rows: filteredRows };
   }, [initialData, selectedDepartment]);
@@ -35,6 +36,8 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     if (!departmentFilteredData || !departmentFilteredData.rows) {
       return 0;
     }
+    // This count relies on the StructuredDataView's internal filtering for "Nombre del Cargo"
+    // To be fully accurate here, we should replicate that filtering.
     return departmentFilteredData.rows.filter(row => {
       const nombreDelCargo = row["Nombre del Cargo"];
       return nombreDelCargo && nombreDelCargo.trim() !== "";
@@ -95,4 +98,3 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
     </div>
   );
 }
-
