@@ -7,7 +7,7 @@ import { StructuredDataView } from "@/components/sheet-surfer/StructuredDataView
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Filter, Briefcase, Info } from "lucide-react";
+import { Filter, Briefcase } from "lucide-react"; // Removed Info, Briefcase is already here
 
 interface InteractiveDataViewProps {
   initialData: ParsedCSVData;
@@ -33,8 +33,18 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
   }, [initialData, selectedDepartment]);
 
   const totalRecordsInDepartment = useMemo(() => {
-    return departmentFilteredData.rows.length;
-  }, [departmentFilteredData]);
+    // This count reflects all rows for the selected department, before "Nombre del Cargo" filtering in StructuredDataView
+    if (!initialData || !initialData.rows) {
+      return 0;
+    }
+    if (selectedDepartment === "all") {
+      return initialData.rows.length;
+    }
+    const lowercasedSelectedDepartment = selectedDepartment.toLowerCase();
+    return initialData.rows.filter(
+      (row) => row["Departamento"]?.toLowerCase() === lowercasedSelectedDepartment
+    ).length;
+  }, [initialData, selectedDepartment]);
 
   const hasData = initialData.rows.length > 0 && initialData.headers.length > 0;
 
@@ -89,7 +99,7 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
 
           {hasData && !fetchError && (
              <div className="mb-4 flex items-center text-sm text-muted-foreground">
-              <Info className="mr-2 h-4 w-4 text-primary" />
+              <Briefcase className="mr-2 h-4 w-4 text-primary" /> {/* Changed Info to Briefcase here */}
               <span>Registros en {departmentDisplayName}: {totalRecordsInDepartment}</span>
             </div>
           )}
