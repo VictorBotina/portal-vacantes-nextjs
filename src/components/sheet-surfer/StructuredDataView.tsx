@@ -4,7 +4,7 @@
 import type { ParsedCSVData } from "@/lib/csv-parser";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Briefcase } from "lucide-react"; // Import the Briefcase icon
+import { User } from "lucide-react"; // Changed from Briefcase to User
 
 interface StructuredDataViewProps {
   data: ParsedCSVData;
@@ -98,7 +98,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
               <CardHeader>
                 {nombreDelCargoValue && nombreDelCargoValue.trim() !== "" && (
                   <div className="flex items-center">
-                    <Briefcase className="mr-3 h-6 w-6 text-primary flex-shrink-0" />
+                    <User className="mr-3 h-6 w-6 text-primary flex-shrink-0" /> {/* Changed icon to User */}
                     <CardTitle>{nombreDelCargoValue}</CardTitle>
                   </div>
                 )}
@@ -110,7 +110,7 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
                  {/* If no title but there is a type, show icon with type */}
                 {(!nombreDelCargoValue || nombreDelCargoValue.trim() === "") && tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
                    <div className="flex items-center">
-                    <Briefcase className="mr-3 h-6 w-6 text-primary flex-shrink-0" />
+                    <User className="mr-3 h-6 w-6 text-primary flex-shrink-0" /> {/* Changed icon to User */}
                      <CardDescription>
                         <strong className="font-bold">Tipo de Convocatoria:</strong> {tipoConvocatoriaValue}
                     </CardDescription>
@@ -129,4 +129,3 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
     </ScrollArea>
   );
 }
-
