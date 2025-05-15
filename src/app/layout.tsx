@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Sheet Surfer',
-  description: 'Explore and summarize Google Sheet data with AI.',
+  title: 'Convocatorias Laborales',
+  description: 'Te invitamos a explorar nuestras oportunidades laborales y a postularte para formar parte de Emssanar EPS',
 };
 
 export default function RootLayout({
