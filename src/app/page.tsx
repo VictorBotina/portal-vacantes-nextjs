@@ -1,8 +1,10 @@
+
 import { parseCSV, type ParsedCSVData } from "@/lib/csv-parser";
-import { DataTable } from "@/components/sheet-surfer/DataTable";
+// import { DataTable } from "@/components/sheet-surfer/DataTable"; // Replaced by StructuredDataView
+import { StructuredDataView } from "@/components/sheet-surfer/StructuredDataView";
 import { DataSummary } from "@/components/sheet-surfer/DataSummary";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, TableIcon } from "lucide-react";
+import { AlertCircle, Newspaper } from "lucide-react"; // Changed Icon
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6Gi_bB6J6fMCWb77Ii21cj_IgEbKu5a5Kqf5eEexVt6xnr4wIvQ175kfGgW7029MAry_FrHoF74pL/pub?gid=0&single=true&output=csv";
@@ -34,7 +36,7 @@ export default async function HomePage() {
     <div className="container mx-auto p-4 md:p-8">
       <header className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight text-primary flex items-center justify-center">
-          <TableIcon className="mr-3 h-10 w-10" />
+          <Newspaper className="mr-3 h-10 w-10" /> {/* Changed Icon */}
           Sheet Surfer
         </h1>
         <p className="text-lg text-muted-foreground mt-2">
@@ -57,12 +59,12 @@ export default async function HomePage() {
           <CardHeader>
             <CardTitle>Data Explorer</CardTitle>
             <CardDescription>
-              View, sort, and filter the data from your Google Sheet.
+              View data from your Google Sheet, presented in a structured format.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {hasData && !error ? (
-              <DataTable initialData={parsedData} />
+              <StructuredDataView data={parsedData} />
             ) : !error ? (
                <p className="text-center text-muted-foreground py-8">No data loaded or the sheet is empty.</p>
             ) : null }
