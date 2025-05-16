@@ -100,7 +100,7 @@ export function InteractiveDataView({ initialData, departments, fetchError }: In
           {hasData && !fetchError && (
              <div className="mb-4 flex items-center text-sm text-muted-foreground">
               <Briefcase className="mr-2 h-4 w-4 text-primary" /> {/* Changed Info to Briefcase here */}
-              <span>Registros en {departmentDisplayName}: {totalRecordsInDepartment}</span>
+              <span>Vacantes en {departmentDisplayName}: {totalRecordsInDepartment}</span>
             </div>
           )}
 
