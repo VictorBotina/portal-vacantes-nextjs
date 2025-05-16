@@ -104,12 +104,12 @@ export function StructuredDataView({ data }: StructuredDataViewProps) {
 
 
           return (
-            <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
-              <CardHeader>
+            <Card key={index} className=" shadow-md hover:shadow-lg transition-shadow duration-200 flex flex-col">
+              <CardHeader >
                 {nombreDelCargoValue && nombreDelCargoValue.trim() !== "" && (
                   <div className="flex items-start"> {/* items-start for better alignment with multi-line titles */}
                     <Briefcase className="mr-3 h-6 w-6 text-primary flex-shrink-0 mt-1" />
-                    <CardTitle className="flex-1">{nombreDelCargoValue}</CardTitle>
+                    <CardTitle className="text-lg flex-1">{nombreDelCargoValue}</CardTitle>
                   </div>
                 )}
                 {tipoConvocatoriaValue && tipoConvocatoriaValue.trim() !== "" && (
